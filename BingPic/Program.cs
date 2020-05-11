@@ -85,21 +85,22 @@ namespace BingPic
                         else
                         {
                             response = await client.GetAsync(url);
-                            System.Drawing.Image image = System.Drawing.Image.FromStream(await response.Content.ReadAsStreamAsync());
                             string tmp = Path.Combine(Path.GetTempPath(), "temp.jpg");
-                            //删除可能存在的旧的临时文件
-                            if (File.Exists(tmp))
+                            using (System.Drawing.Image image = System.Drawing.Image.FromStream(await response.Content.ReadAsStreamAsync()))
                             {
-                                try
+                                //删除可能存在的旧的临时文件
+                                if (File.Exists(tmp))
                                 {
-                                    File.Delete(tmp);
+                                    try
+                                    {
+                                        File.Delete(tmp);
+                                    }
+                                    catch { }
                                 }
-                                catch { }
+                                //保存图片
+                                image.Save(tmp);
                             }
-                            //保存图片，设置壁纸
-                            image.Save(tmp);
-                            //释放资源
-                            image.Dispose();
+                            //设置壁纸
                             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
                             string WallpaperStyle = "", TileWallpaper = "";
                             switch (style)
