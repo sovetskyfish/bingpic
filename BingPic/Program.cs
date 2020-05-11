@@ -60,13 +60,13 @@ namespace BingPic
 
         static async Task Loop()
         {
-            var lastDay = DateTime.Now.Day;
+            var lastDay = -1;
             while (true)
             {
                 try
                 {
                     //检查日期并更换桌面壁纸
-                    var currentDay = -1;
+                    var currentDay = DateTime.Now.Day;
                     if (lastDay != currentDay)
                     {
                         //新的一天来临了！昨晚被杀的是（划掉
