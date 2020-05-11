@@ -61,6 +61,7 @@ namespace BingPic
         static async Task Loop()
         {
             var lastDay = -1;
+            string lasturl = "";
             while (true)
             {
                 try
@@ -70,59 +71,68 @@ namespace BingPic
                     if (lastDay != currentDay)
                     {
                         //新的一天来临了！昨晚被杀的是（划掉
-                        lastDay = currentDay;
                         //获取最新的必应美图，此高清Uri由晨旭姐姐提供~
                         var response = await client.GetAsync("https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&pid=hp&uhd=1&uhdwidth=3840&uhdheight=2160");
                         if (!response.IsSuccessStatusCode) continue;
                         var json = await response.Content.ReadAsStringAsync();
                         var responseObj = BingResponse.FromJson(json);
                         var url = "https://cn.bing.com" + responseObj.Images[0].Url;
-                        response = await client.GetAsync(url);
-                        System.Drawing.Image image = System.Drawing.Image.FromStream(await response.Content.ReadAsStreamAsync());
-                        string tmp = Path.Combine(Path.GetTempPath(), "temp.jpg");
-                        //删除可能存在的旧的临时文件
-                        if (File.Exists(tmp))
+                        if (url == lasturl)
                         {
-                            try
+                            //这和上次的一样嘛！等待interval后重新获取
+                            lastDay = -1;
+                        }
+                        else
+                        {
+                            response = await client.GetAsync(url);
+                            System.Drawing.Image image = System.Drawing.Image.FromStream(await response.Content.ReadAsStreamAsync());
+                            string tmp = Path.Combine(Path.GetTempPath(), "temp.jpg");
+                            //删除可能存在的旧的临时文件
+                            if (File.Exists(tmp))
                             {
-                                File.Delete(tmp);
+                                try
+                                {
+                                    File.Delete(tmp);
+                                }
+                                catch { }
                             }
-                            catch { }
+                            //保存图片，设置壁纸
+                            image.Save(tmp);
+                            //释放资源
+                            image.Dispose();
+                            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+                            string WallpaperStyle = "", TileWallpaper = "";
+                            switch (style)
+                            {
+                                case Program.WallpaperStyle.Center:
+                                    WallpaperStyle = "1";
+                                    TileWallpaper = "0";
+                                    break;
+                                case Program.WallpaperStyle.Stretch:
+                                    WallpaperStyle = "2";
+                                    TileWallpaper = "0";
+                                    break;
+                                case Program.WallpaperStyle.StretchToFill:
+                                    WallpaperStyle = "10";
+                                    TileWallpaper = "0";
+                                    break;
+                                case Program.WallpaperStyle.Tile:
+                                    WallpaperStyle = "1";
+                                    TileWallpaper = "1";
+                                    break;
+                            }
+                            key.SetValue("WallpaperStyle", WallpaperStyle);
+                            key.SetValue("TileWallpaper", TileWallpaper);
+                            SystemParametersInfo
+                                (
+                                SPI_SETDESKWALLPAPER,
+                                0,
+                                tmp,
+                                SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE
+                                );
+                            lastDay = currentDay;
+                            lasturl = url;
                         }
-                        //保存图片，设置壁纸
-                        image.Save(tmp);
-                        //释放资源
-                        image.Dispose();
-                        RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-                        string WallpaperStyle = "", TileWallpaper = "";
-                        switch (style)
-                        {
-                            case Program.WallpaperStyle.Center:
-                                WallpaperStyle = "1";
-                                TileWallpaper = "0";
-                                break;
-                            case Program.WallpaperStyle.Stretch:
-                                WallpaperStyle = "2";
-                                TileWallpaper = "0";
-                                break;
-                            case Program.WallpaperStyle.StretchToFill:
-                                WallpaperStyle = "10";
-                                TileWallpaper = "0";
-                                break;
-                            case Program.WallpaperStyle.Tile:
-                                WallpaperStyle = "1";
-                                TileWallpaper = "1";
-                                break;
-                        }
-                        key.SetValue("WallpaperStyle", WallpaperStyle);
-                        key.SetValue("TileWallpaper", TileWallpaper);
-                        SystemParametersInfo
-                            (
-                            SPI_SETDESKWALLPAPER,
-                            0,
-                            tmp,
-                            SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE
-                            );
                     }
                 }
                 catch { }
