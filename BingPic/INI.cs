@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace BingPic
 {
+    //从StackOverFlow复制粘贴
+
     class INI
     {
         readonly string path;

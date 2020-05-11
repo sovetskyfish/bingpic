@@ -71,7 +71,7 @@ namespace BingPic
                     {
                         //新的一天来临了！昨晚被杀的是（划掉
                         lastDay = currentDay;
-                        //获取最新的必应美图
+                        //获取最新的必应美图，此高清Uri由晨旭姐姐提供~
                         var response = await client.GetAsync("https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&pid=hp&uhd=1&uhdwidth=3840&uhdheight=2160");
                         if (!response.IsSuccessStatusCode) continue;
                         var json = await response.Content.ReadAsStringAsync();
