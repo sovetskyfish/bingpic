@@ -91,6 +91,8 @@ namespace BingPic
                         }
                         //保存图片，设置壁纸
                         image.Save(tmp);
+                        //释放资源
+                        image.Dispose();
                         RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
                         string WallpaperStyle = "", TileWallpaper = "";
                         switch (style)
