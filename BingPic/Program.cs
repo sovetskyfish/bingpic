@@ -23,7 +23,7 @@ namespace BingPic
         }
 
         static HttpClient client = new HttpClient();
-        static int interval = 5;
+        static int interval = 10;
         static WallpaperStyle style = WallpaperStyle.StretchToFill;
 
         static void Main(string[] args)

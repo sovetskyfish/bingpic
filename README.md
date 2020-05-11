@@ -8,7 +8,7 @@
 
 ```
 [Core]
-Interval = 5
+Interval = 10
 WallpaperStyle = StretchToFill
 ```
 
