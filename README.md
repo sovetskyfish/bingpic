@@ -14,4 +14,4 @@ WallpaperStyle = StretchToFill
 
 其中，`Interval`为程序时间检查间隔（以分钟计）；`WallpaperStyle`为壁纸模式，有四个取值：`Center`，`Stretch`，`StretchToFill`以及`Tile`。
 
-必应美图的高清无码API由[晨旭](https://github.com/chenxuuu)姐姐提供~
+必应美图的高清无码API由[晨旭](https://github.com/chenxuuu)提供~
