@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -22,7 +23,7 @@ namespace BingPic
             StretchToFill
         }
 
-        static HttpClient client = new HttpClient();
+        static HttpClient client = new HttpClient(new HttpClientHandler() { Proxy = new WebProxy() });
         static int interval = 10;
         static WallpaperStyle style = WallpaperStyle.StretchToFill;
 
