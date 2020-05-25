@@ -27,6 +27,7 @@ namespace BingPic
         static HttpClient client = new HttpClient(new HttpClientHandler() { Proxy = new WebProxy() });
         static int interval = 10;
         static WallpaperStyle style = WallpaperStyle.StretchToFill;
+        static bool showCopyright = true;
 
         static void Main(string[] args)
         {
@@ -34,10 +35,32 @@ namespace BingPic
             try
             {
                 INI ini = new INI("settings.ini");
-                interval = Convert.ToInt32(ini.Read("Interval"));
-                if (!Enum.TryParse(ini.Read("WallpaperStyle"), out style))
+                try
+                {
+                    interval = Convert.ToInt32(ini.Read("Interval"));
+                }
+                catch { }
+                try
+                {
+                    if (!Enum.TryParse(ini.Read("WallpaperStyle"), out style))
+                    {
+                        style = WallpaperStyle.StretchToFill;
+                    }
+                }
+                catch
                 {
                     style = WallpaperStyle.StretchToFill;
+                }
+                try
+                {
+                    if (!bool.TryParse(ini.Read("ShowCopyright"), out showCopyright))
+                    {
+                        showCopyright = true;
+                    }
+                }
+                catch
+                {
+                    showCopyright = true;
                 }
             }
             //若读取过程中出现任何错误，则使用默认值代替未被成功读取的值
@@ -133,10 +156,13 @@ namespace BingPic
                                 );
                             lastDay = currentDay;
                             lasturl = url;
-                            //绘制版权信息
-                            var copyright = responseObj.Images[0].Copyright.Replace("(", "").Replace(")", "").Replace(" ©", "\n©");
-                            DesktopTextHelper.ClearText();
-                            DesktopTextHelper.DrawText("Microsoft YaHei UI", 14, FontStyle.Bold, Color.FromArgb(255, 255, 255, 255), copyright);
+                            if (showCopyright)
+                            {
+                                //绘制版权信息
+                                var copyright = responseObj.Images[0].Copyright.Replace("(", "").Replace(")", "").Replace(" ©", "\n©");
+                                DesktopTextHelper.ClearText();
+                                DesktopTextHelper.DrawText("Microsoft YaHei UI", 14, FontStyle.Bold, Color.FromArgb(255, 255, 255, 255), copyright);
+                            }
                         }
                     }
                 }
