@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BingResponse.cs" />
+    <Compile Include="DesktopTextHelper.cs" />
     <Compile Include="INI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +71,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Win32Helper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
