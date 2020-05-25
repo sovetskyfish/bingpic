@@ -10,8 +10,9 @@
 [Core]
 Interval = 10
 WallpaperStyle = StretchToFill
+ShowCopyright = true
 ```
 
-其中，`Interval`为程序时间检查间隔（以分钟计）；`WallpaperStyle`为壁纸模式，有四个取值：`Center`，`Stretch`，`StretchToFill`以及`Tile`。
+其中，`Interval`为程序时间检查间隔（以分钟计）；`WallpaperStyle`为壁纸模式，有四个取值：`Center`，`Stretch`，`StretchToFill`以及`Tile`；`ShowCopyright`决定是否在桌面右下角展示版权信息。各项可以单独设置。
 
 必应美图的高清无码API由[晨旭](https://github.com/chenxuuu)提供~
