@@ -22,10 +22,12 @@ namespace BingPic
             using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
             {
                 IntPtr desktop = g.GetHdc();
-                int horzRes = GetDeviceCaps(desktop, DESKTOPHORZRES);
-                int vertRes = GetDeviceCaps(desktop, DESKTOPVERTRES);
+                int vertResPhysical = GetDeviceCaps(desktop, DESKTOPVERTRES);
                 int vertResLogical = GetDeviceCaps(desktop, VERTRES);
-                return (new Rectangle(0, 0, horzRes, vertRes), (float)vertRes / vertResLogical);
+                float factor = (float)vertResPhysical / vertResLogical;
+                int horzRes = GetSystemMetrics(SM_CXFULLSCREEN) - 10;
+                int vertRes = GetSystemMetrics(SM_CYFULLSCREEN) + 10;
+                return (new Rectangle(0, 0, (int)(horzRes * factor), (int)(vertRes * factor)), factor);
             }
         }
 
@@ -82,7 +84,7 @@ namespace BingPic
                     {
                         using (StringFormat stringFormat = new StringFormat())
                         {
-                            stringFormat.LineAlignment = StringAlignment.Near;
+                            stringFormat.LineAlignment = StringAlignment.Far;
                             stringFormat.Alignment = StringAlignment.Far;
                             g.DrawString(Text, font, new SolidBrush(FontColor), res, stringFormat);
                         }

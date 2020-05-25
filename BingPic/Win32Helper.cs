@@ -12,6 +12,8 @@ namespace BingPic
         public const int SPI_SETDESKWALLPAPER = 20;
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const int SPIF_SENDWININICHANGE = 0x02;
+        public const int SM_CXFULLSCREEN = 16;
+        public const int SM_CYFULLSCREEN = 17;
 
         public const uint SMTO_NORMAL = 0x0;
         public const uint UserDefined = 0x403;
@@ -61,6 +63,9 @@ namespace BingPic
 
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hdc, uint nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(int smIndex);
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
         public static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);

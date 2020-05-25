@@ -44,7 +44,12 @@ namespace BingPic
             catch { }
             NotifyIcon notifyIcon = new NotifyIcon();
             ContextMenu menu = new ContextMenu();
-            menu.MenuItems.Add("退出", (s, e) => { Environment.Exit(0); });
+            menu.MenuItems.Add("退出", (s, e) =>
+            {
+                //清除版权信息
+                DesktopTextHelper.ClearText();
+                Environment.Exit(0);
+            });
             notifyIcon.ContextMenu = menu;
             notifyIcon.Text = "必应每日一图";
             notifyIcon.Icon = Properties.Resources.TrayIcon;
@@ -128,6 +133,10 @@ namespace BingPic
                                 );
                             lastDay = currentDay;
                             lasturl = url;
+                            //绘制版权信息
+                            var copyright = responseObj.Images[0].Copyright.Replace("(", "").Replace(")", "").Replace(" ©", "\n©");
+                            DesktopTextHelper.ClearText();
+                            DesktopTextHelper.DrawText("Microsoft YaHei UI", 14, FontStyle.Bold, Color.FromArgb(255, 255, 255, 255), copyright);
                         }
                     }
                 }
