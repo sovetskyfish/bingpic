@@ -161,7 +161,7 @@ namespace BingPic
                                 //绘制版权信息
                                 var copyright = responseObj.Images[0].Copyright.Replace("(", "").Replace(")", "").Replace(" ©", "\n©");
                                 DesktopTextHelper.ClearText();
-                                DesktopTextHelper.DrawText("Microsoft YaHei UI", 14, FontStyle.Bold, Color.FromArgb(255, 255, 255, 255), copyright);
+                                DesktopTextHelper.DrawText("Microsoft YaHei UI", 14, FontStyle.Regular, Color.FromArgb(255, 255, 255, 255), copyright);
                             }
                         }
                     }
