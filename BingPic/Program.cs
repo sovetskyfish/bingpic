@@ -16,6 +16,10 @@ namespace BingPic
 {
     class Program
     {
+        //常量
+        const string startupRegistry = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        const string appName = "BingPic";
+
         enum WallpaperStyle
         {
             Center,
@@ -28,6 +32,7 @@ namespace BingPic
         static int interval = 10;
         static WallpaperStyle style = WallpaperStyle.StretchToFill;
         static bool showCopyright = true;
+        static bool autoStart = false;
 
         static void Main(string[] args)
         {
@@ -62,8 +67,44 @@ namespace BingPic
                 {
                     showCopyright = true;
                 }
+                try
+                {
+                    if (!bool.TryParse(ini.Read("AutoStart"), out autoStart))
+                    {
+                        autoStart = false;
+                    }
+                }
+                catch
+                {
+                    autoStart = false;
+                }
             }
             //若读取过程中出现任何错误，则使用默认值代替未被成功读取的值
+            catch { }
+            try
+            {
+                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(startupRegistry, true);
+                var value = registryKey.GetValue(appName);
+                if (autoStart)
+                {
+                    //若配置了自动启动，则将自己添加为自动启动项
+                    if (value == null)
+                    {
+                        //如果没有该键值，则说明应用未被配置自动启动
+                        registryKey.SetValue(appName, Application.ExecutablePath);
+                    }
+                }
+                else
+                {
+                    //否则将自己从启动项中删除
+                    if (value != null)
+                    {
+                        //如果存在该键值，则删除该键值
+                        registryKey.DeleteValue(appName, false);
+                    }
+                }
+            }
+            //无论配置启动项成功与否，都不应该导致程序崩溃
             catch { }
             NotifyIcon notifyIcon = new NotifyIcon();
             ContextMenu menu = new ContextMenu();
