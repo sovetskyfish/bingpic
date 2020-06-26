@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,9 @@ namespace BingPic
         //常量
         const string startupRegistry = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         const string appName = "BingPic";
+
+        //只读数据
+        readonly static string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         enum WallpaperStyle
         {
@@ -39,7 +43,7 @@ namespace BingPic
             //读取可能不存在的配置文件
             try
             {
-                INI ini = new INI("settings.ini");
+                INI ini = new INI(Path.Combine(localAppData, "BingPic\\settings.ini"));
                 try
                 {
                     interval = Convert.ToInt32(ini.Read("Interval"));
@@ -108,6 +112,36 @@ namespace BingPic
             catch { }
             NotifyIcon notifyIcon = new NotifyIcon();
             ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add("编辑设置", (s, e) =>
+            {
+                try
+                {
+                    if (!File.Exists(Path.Combine(localAppData, "BingPic\\settings.ini")))
+                    {
+                        //若不存在该文件，则首先创建一个新的
+                        Directory.CreateDirectory(Path.Combine(localAppData, "BingPic"));
+                        using (var settingsFile = File.CreateText(Path.Combine(localAppData, "BingPic\\settings.ini")))
+                        {
+                            //向文件中写入基本框架
+                            settingsFile.WriteLine("; 自动生成的设置项配置文件\n; 您可以在项目的GitHub页面查看设置项说明");
+                            settingsFile.WriteLine("[Core]");
+                            settingsFile.Flush();
+                        }
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show($"设置项文件不存在却无法创建设置项配置文件。\n" +
+                        $"您可以尝试手动创建文件：\n" +
+                        $"{Path.Combine(localAppData, "BingPic\\settings.ini")}\n" +
+                        $"并编辑它来配置此应用程序。", "出错了");
+                    return;
+                }
+                //打开文件资源管理器并选中该文件
+                Process.Start("explorer.exe",
+                    $"/select, \"{Path.Combine(localAppData, "BingPic\\settings.ini")}\"");
+            });
+            menu.MenuItems.Add("-");
             menu.MenuItems.Add("退出", (s, e) =>
             {
                 //清除版权信息
