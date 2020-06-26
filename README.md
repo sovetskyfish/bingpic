@@ -4,7 +4,7 @@
 
 # 配置文件格式
 
-在可执行文件的同目录下建立一个`settings.ini`文件，它应该包含一个名为`Core`的Section，所有配置项均在此Section下声明。下面是默认配置等价的INI文件示例：
+右击程序托盘上的图标，选择“编辑设置”；这将在`%LOCALAPPDATA%\BingPic`下建立一个`settings.ini`文件，它应该包含一个名为`Core`的Section，所有配置项均在此Section下声明。下面是默认配置等价的INI文件示例：
 
 ```
 [Core]
