@@ -38,6 +38,7 @@ namespace BingPic
         static bool showCopyright = true;
         static bool autoStart = false;
 
+        [STAThread]
         static void Main(string[] args)
         {
             //读取可能不存在的配置文件
@@ -140,6 +141,34 @@ namespace BingPic
                 //打开文件资源管理器并选中该文件
                 Process.Start("explorer.exe",
                     $"/select, \"{Path.Combine(localAppData, "BingPic\\settings.ini")}\"");
+            });
+            menu.MenuItems.Add("将壁纸另存为...", (s, e) =>
+            {
+                //弹出另存为对话框
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                dialog.Title = "另存为";
+                dialog.Filter = "JPEG 图片|*.jpg";
+                var result = dialog.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.FileName))
+                {
+                    //如果用户选择了保存的位置
+                    try
+                    {
+                        if (File.Exists(dialog.FileName))
+                        {
+                            //删除已经存在的文件
+                            File.Delete(dialog.FileName);
+                        }
+                        //将临时文件拷贝过去
+                        File.Copy(Path.Combine(Path.GetTempPath(), "temp.jpg"), dialog.FileName);
+                    }
+                    catch
+                    {
+                        //保存出现了错误
+                        MessageBox.Show($"无法将图片保存到 {dialog.FileName}", "保存失败");
+                    }
+                }
             });
             menu.MenuItems.Add("-");
             menu.MenuItems.Add("退出", (s, e) =>
