@@ -173,6 +173,7 @@ namespace BingPic
             menu.MenuItems.Add("-");
             menu.MenuItems.Add("退出", (s, e) =>
             {
+                notifyIcon.Dispose();
                 //清除版权信息
                 DesktopTextHelper.ClearText();
                 Environment.Exit(0);
